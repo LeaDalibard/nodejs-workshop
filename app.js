@@ -6,6 +6,7 @@ const port = 3000;
 const Users= require("./Models/users");
 const passport=require('passport');
 const path = require('path');
+var routes = require('./Routes/routes');
 
 var app = express();
 
@@ -16,17 +17,16 @@ app.use(cookieSession({
     name: 'session',
     keys: ['key1', 'key2']
 }))
-app.set('view engine', 'pug');
-
-app.set('views', path.join(__dirname, 'views'));
-
 app.post('/login', passport.authenticate('local', { successRedirect: '/',
     failureRedirect: '/login' }));
 app.get('/', (req, res) => {
     res.send('Hello World!')
 })
+app.set('view engine', 'pug');
 
-passport.use(new LocalStrategy(Users.authenticate()));
+app.set('views', path.join(__dirname, 'views'));
+
+passport.use(Users.createStrategy());
 passport.serializeUser(Users.serializeUser());
 passport.deserializeUser(Users.deserializeUser());
 
@@ -35,3 +35,7 @@ mongoose.connect('mongodb://localhost:3000/Users', {useNewUrlParser: true});
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
+
+app.use('/', require('./Routes/routes'));
+
+
