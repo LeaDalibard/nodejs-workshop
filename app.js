@@ -5,7 +5,10 @@ var mongoose=require ('mongoose');
 const port = 3000;
 const Users= require("./Models/users");
 const passport=require('passport');
+const path = require('path');
+
 var app = express();
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
@@ -13,6 +16,9 @@ app.use(cookieSession({
     name: 'session',
     keys: ['key1', 'key2']
 }))
+app.set('view engine', 'pug');
+
+app.set('views', path.join(__dirname, 'views'));
 
 app.post('/login', passport.authenticate('local', { successRedirect: '/',
     failureRedirect: '/login' }));
